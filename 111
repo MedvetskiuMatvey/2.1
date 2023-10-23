@@ -1,0 +1,121 @@
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self, *args):
+        self.first = None
+        self.last = None
+        self.length = 0
+        
+        for arg in args:
+            self.add_back(arg)
+
+    def add_forward(self, el):
+        new_node = Node(el)
+        new_node.next = self.first
+        self.first = new_node
+        
+        if self.length == 0:
+            self.last = self.first
+        
+        self.length += 1
+
+    def add_back(self, el):
+        new_node = Node(el)
+        
+        if self.length == 0:
+            self.first = new_node
+        else:
+            self.last.next = new_node
+        
+        self.last = new_node
+        self.length += 1
+
+    def pop(self, index=0):
+        if self.length == 0:
+            raise IndexError('pop index out of range')
+        
+        if index < 0 or index >= self.length:
+            raise IndexError('pop index out of range')
+        
+        if index == 0:
+            val = self.first.data
+            self.first = self.first.next
+            
+            if self.length == 1:
+                self.last = None
+            
+            self.length -= 1
+            return val
+        
+        if index == self.length - 1:
+            return self.pop()
+
+        current = self.first
+        previous = None
+        current_index = 0
+        
+        while current_index < index:
+            previous = current
+            current = current.next
+            current_index += 1
+        
+        val = current.data
+        previous.next = current.next
+        
+        if current == self.last:
+            self.last = previous
+        
+        self.length -= 1
+        return val
+
+    def add(self, other):
+        if not isinstance(other, LinkedList):
+            raise TypeError('can only concatenate LinkedList (not "{}") to LinkedList'.format(type(other).__name__))
+        
+        for val in other:
+            self.add_back(val)
+
+    def __getitem__(self, index):
+        if index < 0 or index >= self.length:
+            raise IndexError('list index out of range')
+        
+        current = self.first
+        current_index = 0
+        
+        while current_index < index:
+            current = current.next
+            current_index += 1
+        
+        return current.data
+
+    def __setitem__(self, index, value):
+        if index < 0 or index >= self.length:
+            raise IndexError('list index out of range')
+        
+        current = self.first
+        current_index = 0
+        
+        while current_index < index:
+            current = current.next
+            current_index += 1
+        
+        current.data = value
+
+    def __len__(self):
+        return self.length
+
+    def __str__(self):
+        result = ''
+        current = self.first
+        
+        while current:
+            result += str(current.data) + ' -> '
+            current = current.next
+        
+        return '(' + result.rstrip(' -> ') + ')'
+
+    def __repr__(self):
+        return self.__str__()
